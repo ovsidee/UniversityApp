@@ -1,0 +1,49 @@
+<%- include('../partials/header') %>
+
+<div class="card detail-card">
+    <h2><%= student.First_Name %> <%= student.Last_Name %></h2>
+    <p><strong>Email:</strong> <%= student.Email %></p>
+    <p><strong>Phone:</strong> <%= student.PhoneNumber %></p>
+
+    <div style="margin-top: 15px;">
+        <a href="/students/edit/<%= student.ID %>" class="btn">Edit Profile</a>
+
+        <a href="/students/<%= student.ID %>/enroll" class="btn" style="background-color: #28a745;">Enroll in Course</a>
+
+        <a href="/students" class="btn secondary">Back to List</a>
+    </div>
+</div>
+
+<h3>Enrolled Courses</h3>
+
+<% if (enrollments.length > 0) { %>
+    <table>
+        <thead>
+        <tr>
+            <th>Course Name</th>
+            <th>Credits</th>
+            <th>Grade</th>
+            <th>Date</th>
+            <th>Actions</th> </tr>
+        </thead>
+        <tbody>
+        <% enrollments.forEach(enrol => { %>
+            <tr>
+                <td><%= enrol.Name %></td>
+                <td><%= enrol.Credits %></td>
+                <td><%= enrol.grade || 'N/A' %></td>
+                <td><%= enrol.enrollment_date %></td>
+                <td>
+                    <form action="/students/<%= student.ID %>/enroll/<%= enrol.course_ID %>?_method=DELETE" method="POST" onsubmit="return confirm('Unenroll student from this course?')">
+                        <button type="submit" class="btn-sm delete">Remove</button>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+        </tbody>
+    </table>
+<% } else { %>
+    <p>This student is not enrolled in any courses.</p>
+<% } %>
+
+<%- include('../partials/footer') %>

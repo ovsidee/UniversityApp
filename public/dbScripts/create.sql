@@ -27,7 +27,7 @@ CREATE TABLE Enrollment
 (
     student_ID      INTEGER,
     course_ID       INTEGER,
-    grade           TEXT,
+    grade           real,
     enrollment_date TEXT,
     PRIMARY KEY (student_ID, course_ID),
     FOREIGN KEY (student_ID) REFERENCES Student (ID) ON DELETE CASCADE,

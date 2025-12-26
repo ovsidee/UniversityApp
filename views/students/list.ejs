@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+
+<div class="header-flex">
+    <h2>Students List</h2>
+    <a href="/students/add" class="btn">Add New Student</a>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% students.forEach(student => { %>
+        <tr>
+            <td><%= student.ID %></td>
+            <td><%= student.First_Name %> <%= student.Last_Name %></td>
+            <td><%= student.Email %></td>
+            <td>
+                <a href="/students/view/<%= student.ID %>" class="btn-sm view">View</a>
+                <a href="/students/edit/<%= student.ID %>" class="btn-sm edit">Edit</a>
+
+                <form action="/students/delete/<%= student.ID %>" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?')">
+                    <button type="submit" class="btn-sm delete">Delete</button>
+                </form>
+            </td>
+        </tr>
+    <% }) %>
+    </tbody>
+</table>
+
+<%- include('../partials/footer') %>

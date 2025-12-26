@@ -1,0 +1,63 @@
+<%- include('../partials/header') %>
+
+<div class="card detail-card">
+    <h2><%= course.Name %></h2>
+    <p><strong>Credits:</strong> <%= course.Credits %></p>
+    <p><strong>Description:</strong> <%= course.Description || 'No description provided.' %></p>
+
+    <div style="margin-top: 15px;">
+        <a href="/courses/edit/<%= course.ID %>" class="btn">Edit Course</a>
+        <a href="/courses/<%= course.ID %>/enroll" class="btn" style="background-color: #28a745;">Add Student</a>
+        <a href="/courses" class="btn secondary">Back to List</a>
+    </div>
+</div>
+
+<h3>Enrolled Students</h3>
+
+<% if (students.length > 0) { %>
+    <table>
+        <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Grade</th>
+            <th>Actions</th> </tr>
+        </thead>
+        <tbody>
+        <% students.forEach(student => { %>
+            <tr>
+                <td>
+                    <a href="/students/view/<%= student.ID %>">
+                        <%= student.First_Name %> <%= student.Last_Name %>
+                    </a>
+                </td>
+
+                <td>
+                    <form action="/courses/<%= course.ID %>/grade/<%= student.ID %>" method="POST" style="display: flex; gap: 5px; align-items: center;">
+                        <input
+                                type="number"
+                                name="grade"
+                                value="<%= student.grade %>"
+                                step="0.5"
+                                min="2"
+                                max="5"
+                                style="width: 70px; padding: 4px;"
+                                placeholder="-"
+                        >
+                        <button type="submit" class="btn-sm edit" title="Update Grade">Set</button>
+                    </form>
+                </td>
+
+                <td>
+                    <form action="/courses/<%= course.ID %>/remove/<%= student.ID %>" method="POST" style="display:inline;" onsubmit="return confirm('Remove this student from the course?')">
+                        <button type="submit" class="btn-sm delete">Remove</button>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+        </tbody>
+    </table>
+<% } else { %>
+    <p>No students are currently enrolled in this course.</p>
+<% } %>
+
+<%- include('../partials/footer') %>
