@@ -1,28 +1,36 @@
 const express = require('express');
 const path = require('path');
+const session = require('express-session');
 const app = express();
 
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: false }));
 
-const studentRoutes = require('./routes/students');
-const courseRoutes = require('./routes/courses');
+// 1. Session Config
+app.use(session({
+    secret: 'TIN', // in a real project, we need to use an env variable
+    resave: false,
+    saveUninitialized: false
+}));
 
-// 2. Global Variables (Active Menu)
+// 2. Middleware to pass User to Views (Global Variable)
 app.use((req, res, next) => {
+    res.locals.user = req.session.username; // Available in all EJS files
     res.locals.active = req.path.split('/')[1];
     next();
 });
 
-// ---------ROUTES---------
+const studentRoutes = require('./routes/students');
+const courseRoutes = require('./routes/courses');
+const authRoutes = require('./routes/auth');
 
-// home page (/)
+// ---------ROUTES---------
 app.get('/', (req, res) => {
     res.render('index');
 });
 
-// if a request starts with ..., send it to ...
+app.use('/', authRoutes); // Use Auth Routes
 app.use('/students', studentRoutes);
 app.use('/courses', courseRoutes);
 

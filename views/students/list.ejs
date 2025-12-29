@@ -2,16 +2,17 @@
 
 <div class="header-flex">
     <h2>Students List</h2>
-    <a href="/students/add" class="btn">Add New Student</a>
+    <% if (user) { %>
+        <a href="/students/add" class="btn">Add New Student</a>
+    <% } %>
 </div>
-
 <table>
     <thead>
     <tr>
         <th>ID</th>
         <th>Name</th>
         <th>Email</th>
-        <th>Actions</th>
+        <% if (user) { %> <th>Actions</th> <% } %>
     </tr>
     </thead>
     <tbody>
@@ -20,6 +21,7 @@
             <td><%= student.ID %></td>
             <td><%= student.First_Name %> <%= student.Last_Name %></td>
             <td><%= student.Email %></td>
+            <% if (user) { %>
             <td>
                 <a href="/students/view/<%= student.ID %>" class="btn-sm view">View</a>
                 <a href="/students/edit/<%= student.ID %>" class="btn-sm edit">Edit</a>
@@ -28,9 +30,23 @@
                     <button type="submit" class="btn-sm delete">Delete</button>
                 </form>
             </td>
+            <% } else { %>
+            <% } %>
         </tr>
     <% }) %>
     </tbody>
 </table>
+
+<div class="pagination" style="margin-top: 20px; text-align: center;">
+    <% if (currentPage > 1) { %>
+        <a href="/students?page=<%= currentPage - 1 %>" class="btn secondary">Previous</a>
+    <% } %>
+
+    <span style="margin: 0 10px;">Page <%= currentPage %> of <%= totalPages %></span>
+
+    <% if (currentPage < totalPages) { %>
+        <a href="/students?page=<%= currentPage + 1 %>" class="btn secondary">Next</a>
+    <% } %>
+</div>
 
 <%- include('../partials/footer') %>

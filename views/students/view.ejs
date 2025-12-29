@@ -6,10 +6,10 @@
     <p><strong>Phone:</strong> <%= student.PhoneNumber %></p>
 
     <div style="margin-top: 15px;">
+        <% if (user) { %>
         <a href="/students/edit/<%= student.ID %>" class="btn">Edit Profile</a>
-
         <a href="/students/<%= student.ID %>/enroll" class="btn" style="background-color: #28a745;">Enroll in Course</a>
-
+        <% } %>
         <a href="/students" class="btn secondary">Back to List</a>
     </div>
 </div>
@@ -34,9 +34,13 @@
                 <td><%= enrol.grade || 'N/A' %></td>
                 <td><%= enrol.enrollment_date %></td>
                 <td>
+                    <% if (user) { %>
                     <form action="/students/<%= student.ID %>/enroll/<%= enrol.course_ID %>?_method=DELETE" method="POST" onsubmit="return confirm('Unenroll student from this course?')">
                         <button type="submit" class="btn-sm delete">Remove</button>
                     </form>
+                        <% } else { %>
+                            <span style="color: #999;">Read Only</span>
+                        <% } %>
                 </td>
             </tr>
         <% }) %>

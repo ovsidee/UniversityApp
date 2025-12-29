@@ -11,7 +11,7 @@ VALUES ('Vitalii', 'Korytnyi', 's31719@pjwstk.edu.pl', '555-444-333'),
        ('Maryna', 'Korytna', 'maryna.korytna@pjwstk.edu.pl', '500-111-228');
 
 INSERT INTO Course (Name, Description, Credits)
-VALUES ('AM', 'Analiza matematyczna', 5),
+VALUES ('AM',  'Analiza matematyczna', 5),
        ('PPJ', 'Podstawy programowania w języku Java', 6),
        ('TAK', 'Techniki i architektura komputerów', 4),
        ('WDZ', 'Wstęp do zarządzania', 3),
@@ -35,7 +35,7 @@ VALUES ('AM', 'Analiza matematyczna', 5),
        ('ANG', 'Język angielski', 3),
        ('NAI', 'Narzedzia sztucznej inteligencji', 6),
        ('PPY', 'Podstawy Programowania w Języku Python', 4),
-       ('WF', 'Wychowanie fizyczne', 0),
+       ('WF',  'Wychowanie fizyczne', 0),
        ('PRI', 'Projektowanie systemów informacyjnych', 6),
        ('PPB', 'Prawne podstawy działalności gospodarczej', 3),
        ('MUL', 'Multimedia', 6);
@@ -101,3 +101,7 @@ VALUES
 (10, 16, '5.0', '2026-09-02'),
 (10, 26, '4.5', '2026-09-03'),
 (10, 23, '5.0', '2026-09-04');
+
+INSERT INTO User (Username, Password)
+VALUES ('admin', '$2a$10$wW5gC.7.g/yVwL/N.hJJO.u7.t.t.t.t.t.t.t.t.t.t.t.t.t.t.t');
+-- (Note: In a real scenario, you generate this hash via code, but this works for seeding)

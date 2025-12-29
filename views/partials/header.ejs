@@ -9,9 +9,17 @@
 <nav>
     <div class="brand">UniApp</div>
     <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/students">Students</a></li>
-        <li><a href="/courses">Courses</a></li>
+        <li><a href="/" class="<%= active === '' ? 'active' : '' %>">Home</a></li>
+        <li><a href="/students" class="<%= active === 'students' ? 'active' : '' %>">Students</a></li>
+        <li><a href="/courses" class="<%= active === 'courses' ? 'active' : '' %>">Courses</a></li>
+
+        <% if (user) { %>
+            <li style="margin-left: 20px; color: #aaa;">Hello, <%= user %></li>
+            <li><a href="/logout" style="color: #ff6b6b;">Logout</a></li>
+        <% } else { %>
+            <li><a href="/login">Login</a></li>
+        <% } %>
     </ul>
 </nav>
+<div class="container">
 <div class="container">

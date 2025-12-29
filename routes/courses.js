@@ -2,22 +2,45 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
+//middleware to protect routes
+function requireLogin(req, res, next) {
+    if (!req.session.userId) {
+        return res.redirect('/login');
+    }
+    next();
+}
+
 // 1. List All Courses (GET)
 router.get('/', (req, res) => {
-    const sql = "SELECT * FROM Course ORDER BY ID";
-    db.all(sql, [], (err, rows) => {
-        if (err) return console.error(err.message);
-        res.render('courses/list', { courses: rows });
-    });
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5; // Items per page
+    const offset = (page - 1) * limit;
+
+    db.get("SELECT COUNT(*) as count FROM Course", [], (err, row) => {
+        if (err) return console.error(err);
+
+        const totalItems = row.count;
+        const totalPages = Math.ceil(totalItems / limit);
+
+        const sql = "SELECT * FROM Course ORDER BY ID LIMIT ? OFFSET ?";
+        db.all(sql, [limit, offset], (err, rows) => {
+            if (err) return console.error(err.message);
+            res.render('courses/list', {
+                courses: rows,
+                currentPage: page,
+                totalPages: totalPages
+            });
+        });
+    })
 });
 
 // 2. Add Course Form (GET)
-router.get('/add', (req, res) => {
+router.get('/add', requireLogin, (req, res) => {
     res.render('courses/form', { course: {}, error: null, mode: 'Add' });
 });
 
 // 3. Create Course (POST)
-router.post('/add', (req, res) => {
+router.post('/add', requireLogin, (req, res) => {
     const { name, description, credits } = req.body;
 
     // Server-side Validation
@@ -27,6 +50,10 @@ router.post('/add', (req, res) => {
             error: "Course Name and Credits are required.",
             mode: 'Add'
         });
+    }
+
+    if (credits < 0 || credits > 30) {
+        return console.error("Invalid Credits: " + credits);
     }
 
     const sql = "INSERT INTO Course (Name, Description, Credits) VALUES (?, ?, ?)";
@@ -71,7 +98,7 @@ router.get('/view/:id', (req, res) => {
 });
 
 // 5. Edit Course Form (GET)
-router.get('/edit/:id', (req, res) => {
+router.get('/edit/:id', requireLogin, (req, res) => {
     const id = req.params.id;
     const sql = "SELECT * FROM Course WHERE ID = ?";
     db.get(sql, [id], (err, row) => {
@@ -81,7 +108,7 @@ router.get('/edit/:id', (req, res) => {
 });
 
 // 6. Update Course (POST)
-router.post('/edit/:id', (req, res) => {
+router.post('/edit/:id', requireLogin, (req, res) => {
     const id = req.params.id;
     const { name, description, credits } = req.body;
 
@@ -93,7 +120,7 @@ router.post('/edit/:id', (req, res) => {
 });
 
 // 7. Delete Course (POST)
-router.post('/delete/:id', (req, res) => {
+router.post('/delete/:id',  requireLogin, (req, res) => {
     const id = req.params.id;
     const sql = "DELETE FROM Course WHERE ID = ?";
     db.run(sql, [id], (err) => {
@@ -103,7 +130,7 @@ router.post('/delete/:id', (req, res) => {
 });
 
 // [NEW] 8. Show Enroll Student Form
-router.get('/:id/enroll', (req, res) => {
+router.get('/:id/enroll', requireLogin, (req, res) => {
     const courseId = req.params.id;
     const sqlCourse = "SELECT * FROM Course WHERE ID = ?";
     const sqlStudents = "SELECT * FROM Student ORDER BY Last_Name";
@@ -119,7 +146,7 @@ router.get('/:id/enroll', (req, res) => {
 });
 
 // [NEW] 9. Process Enrollment (Add Student to Course)
-router.post('/:id/enroll', (req, res) => {
+router.post('/:id/enroll', requireLogin, (req, res) => {
     const courseId = req.params.id;
     const { student_id, grade, enrollment_date } = req.body;
 
@@ -153,7 +180,7 @@ router.post('/:id/enroll', (req, res) => {
 });
 
 // [NEW] 10. Remove Student from Course (Unenroll)
-router.post('/:id/remove/:student_id', (req, res) => {
+router.post('/:id/remove/:student_id', requireLogin, (req, res) => {
     const courseId = req.params.id;
     const studentId = req.params.student_id;
 
@@ -165,7 +192,7 @@ router.post('/:id/remove/:student_id', (req, res) => {
 });
 
 // 11. Update Student Grade (POST)
-router.post('/:id/grade/:student_id', (req, res) => {
+router.post('/:id/grade/:student_id', requireLogin, (req, res) => {
     const courseId = req.params.id;
     const studentId = req.params.student_id;
     const { grade } = req.body;
