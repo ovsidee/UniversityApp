@@ -2,165 +2,115 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-//middleware to protect routes
+// --- PERMISSIONS ---
 function requireLogin(req, res, next) {
-    if (!req.session.userId) {
-        return res.redirect('/login');
+    if (!req.session.userId) return res.redirect('/login');
+    next();
+}
+
+function requireStudentOrAdmin(req, res, next) {
+    if (req.session.roleName === 'guest') {
+        return res.status(403).render('403', { message: "Guests cannot view courses." });
     }
     next();
 }
 
-// 1. List All Courses (GET)
-router.get('/', (req, res) => {
+function requireAdmin(req, res, next) {
+    if (req.session.roleName !== 'admin') {
+        return res.status(403).render('403', { message: "Admin access required." });
+    }
+    next();
+}
+
+// 1. List Courses (Student + Admin)
+router.get('/', requireLogin, requireStudentOrAdmin, (req, res) => {
     const page = parseInt(req.query.page) || 1;
-    const limit = 5; // Items per page
+    const limit = 5;
     const offset = (page - 1) * limit;
 
     db.get("SELECT COUNT(*) as count FROM Course", [], (err, row) => {
-        if (err) return console.error(err);
-
         const totalItems = row.count;
         const totalPages = Math.ceil(totalItems / limit);
 
-        const sql = "SELECT * FROM Course ORDER BY ID LIMIT ? OFFSET ?";
-        db.all(sql, [limit, offset], (err, rows) => {
-            if (err) return console.error(err.message);
-            res.render('courses/list', {
-                courses: rows,
-                currentPage: page,
-                totalPages: totalPages
-            });
+        db.all("SELECT * FROM Course ORDER BY ID LIMIT ? OFFSET ?", [limit, offset], (err, rows) => {
+            res.render('courses/list', { courses: rows, currentPage: page, totalPages });
         });
     })
 });
 
-// 2. Add Course Form (GET)
-router.get('/add', requireLogin, (req, res) => {
+// 2. Add Course (Admin Only)
+router.get('/add', requireLogin, requireAdmin, (req, res) => {
     res.render('courses/form', { course: {}, error: null, mode: 'Add' });
 });
 
-// 3. Create Course (POST)
-router.post('/add', requireLogin, (req, res) => {
-    const { name, description, credits } = req.body;
-
-    // Server-side Validation
-    if (!name || !credits) {
-        return res.render('courses/form', {
-            course: req.body,
-            error: "Course Name and Credits are required.",
-            mode: 'Add'
+// [UPDATED] Removed 'description' from logic
+router.post('/add', requireLogin, requireAdmin, (req, res) => {
+    const { name, credits } = req.body;
+    db.run("INSERT INTO Course (Name, Credits) VALUES (?, ?)",
+        [name, credits], (err) => {
+            if(err) return res.render('courses/form', { course:req.body, error: "Error", mode:'Add'});
+            res.redirect('/courses');
         });
-    }
-
-    if (credits < 0 || credits > 30) {
-        return console.error("Invalid Credits: " + credits);
-    }
-
-    const sql = "INSERT INTO Course (Name, Description, Credits) VALUES (?, ?, ?)";
-    db.run(sql, [name, description, credits], (err) => {
-        if (err) {
-            console.error(err);
-            return res.render('courses/form', {
-                course: req.body,
-                error: "Error adding course.",
-                mode: 'Add'
-            });
-        }
-        res.redirect('/courses');
-    });
 });
 
-// 4. View Course Details + Enrolled Students (GET)
-router.get('/view/:id', (req, res) => {
+// 3. View Details (Student + Admin)
+router.get('/view/:id', requireLogin, requireStudentOrAdmin, (req, res) => {
     const id = req.params.id;
-
-    // Query 1: Get Course Details
     const sqlCourse = "SELECT * FROM Course WHERE ID = ?";
-
-    // Query 2: Get Enrolled Students (Relationship)
-    // This joins Student and Enrollment to show WHO is in the class
-    const sqlEnrolledStudents = `
-        SELECT Student.ID, Student.First_Name, Student.Last_Name, Enrollment.grade 
-        FROM Enrollment 
-        JOIN Student ON Enrollment.student_ID = Student.ID 
+    const sqlStudents = `
+        SELECT Student.ID, Student.First_Name, Student.Last_Name, Enrollment.grade
+        FROM Enrollment
+                 JOIN Student ON Enrollment.student_ID = Student.ID
         WHERE Enrollment.course_ID = ?`;
 
     db.get(sqlCourse, [id], (err, course) => {
-        if (err || !course) {
-            return res.status(404).render('404');
-        }
-
-        db.all(sqlEnrolledStudents, [id], (err, students) => {
-            if (err) return console.error(err);
+        if (!course) return res.status(404).render('404');
+        db.all(sqlStudents, [id], (err, students) => {
             res.render('courses/view', { course, students });
         });
     });
 });
 
-// 5. Edit Course Form (GET)
-router.get('/edit/:id', requireLogin, (req, res) => {
-    const id = req.params.id;
-    const sql = "SELECT * FROM Course WHERE ID = ?";
-    db.get(sql, [id], (err, row) => {
-        if (err || !row) return res.redirect('/courses');
+// 4. Edit/Delete (Admin Only)
+router.get('/edit/:id', requireLogin, requireAdmin, (req, res) => {
+    db.get("SELECT * FROM Course WHERE ID = ?", [req.params.id], (err, row) => {
+        if(!row) return res.redirect('/courses');
         res.render('courses/form', { course: row, error: null, mode: 'Edit' });
     });
 });
 
-// 6. Update Course (POST)
-router.post('/edit/:id', requireLogin, (req, res) => {
-    const id = req.params.id;
-    const { name, description, credits } = req.body;
-
-    const sql = "UPDATE Course SET Name = ?, Description = ?, Credits = ? WHERE ID = ?";
-    db.run(sql, [name, description, credits, id], (err) => {
-        if (err) return console.error(err);
-        res.redirect('/courses');
-    });
+// [UPDATED] Removed 'description' from logic
+router.post('/edit/:id', requireLogin, requireAdmin, (req, res) => {
+    const { name, credits } = req.body;
+    db.run("UPDATE Course SET Name = ?, Credits = ? WHERE ID = ?",
+        [name, credits, req.params.id], () => res.redirect('/courses'));
 });
 
-// 7. Delete Course (POST)
-router.post('/delete/:id',  requireLogin, (req, res) => {
-    const id = req.params.id;
-    const sql = "DELETE FROM Course WHERE ID = ?";
-    db.run(sql, [id], (err) => {
-        if (err) return console.error(err);
-        res.redirect('/courses');
-    });
+router.post('/delete/:id', requireLogin, requireAdmin, (req, res) => {
+    db.run("DELETE FROM Course WHERE ID = ?", [req.params.id], () => res.redirect('/courses'));
 });
 
-// [NEW] 8. Show Enroll Student Form
-router.get('/:id/enroll', requireLogin, (req, res) => {
+// 5. ENROLLMENT ROUTES (Admin Only)
+
+router.get('/:id/enroll', requireLogin, requireAdmin, (req, res) => {
     const courseId = req.params.id;
-    const sqlCourse = "SELECT * FROM Course WHERE ID = ?";
-    const sqlStudents = "SELECT * FROM Student ORDER BY Last_Name";
+    db.get("SELECT * FROM Course WHERE ID = ?", [courseId], (err, course) => {
+        if (!course) return res.status(404).render('404');
 
-    db.get(sqlCourse, [courseId], (err, course) => {
-        if (err || !course) return res.redirect('/courses');
-
-        db.all(sqlStudents, [], (err, students) => {
-            if (err) return console.error(err);
+        db.all("SELECT * FROM Student ORDER BY Last_Name", [], (err, students) => {
             res.render('courses/enroll', { course, students, error: null });
         });
     });
 });
 
-// [NEW] 9. Process Enrollment (Add Student to Course)
-router.post('/:id/enroll', requireLogin, (req, res) => {
+router.post('/:id/enroll', requireLogin, requireAdmin, (req, res) => {
     const courseId = req.params.id;
     const { student_id, grade, enrollment_date } = req.body;
 
-    if (!student_id) {
-        return res.redirect(`/courses/${courseId}/enroll`);
-    }
-
-    const date = enrollment_date || new Date().toISOString().split('T')[0];
     const sqlInsert = "INSERT INTO Enrollment (student_ID, course_ID, grade, enrollment_date) VALUES (?, ?, ?, ?)";
 
-    db.run(sqlInsert, [student_id, courseId, grade, date], (err) => {
+    db.run(sqlInsert, [student_id, courseId, grade, enrollment_date], (err) => {
         if (err) {
-            console.error(err);
-            // Error handling: Reload page with error message
             const sqlCourse = "SELECT * FROM Course WHERE ID = ?";
             const sqlStudents = "SELECT * FROM Student ORDER BY Last_Name";
 
@@ -169,7 +119,7 @@ router.post('/:id/enroll', requireLogin, (req, res) => {
                     return res.render('courses/enroll', {
                         course: course,
                         students: students,
-                        error: "Error: Student likely already in this course."
+                        error: "error_enroll_exists"
                     });
                 });
             });
@@ -179,33 +129,14 @@ router.post('/:id/enroll', requireLogin, (req, res) => {
     });
 });
 
-// [NEW] 10. Remove Student from Course (Unenroll)
-router.post('/:id/remove/:student_id', requireLogin, (req, res) => {
-    const courseId = req.params.id;
-    const studentId = req.params.student_id;
-
-    const sql = "DELETE FROM Enrollment WHERE course_ID = ? AND student_ID = ?";
-    db.run(sql, [courseId, studentId], (err) => {
-        if (err) console.error(err);
-        res.redirect(`/courses/view/${courseId}`);
-    });
+router.post('/:id/remove/:student_id', requireLogin, requireAdmin, (req, res) => {
+    db.run("DELETE FROM Enrollment WHERE course_ID = ? AND student_ID = ?",
+        [req.params.id, req.params.student_id], () => res.redirect(`/courses/view/${req.params.id}`));
 });
 
-// 11. Update Student Grade (POST)
-router.post('/:id/grade/:student_id', requireLogin, (req, res) => {
-    const courseId = req.params.id;
-    const studentId = req.params.student_id;
-    const { grade } = req.body;
-
-    const sql = "UPDATE Enrollment SET grade = ? WHERE course_ID = ? AND student_ID = ?";
-
-    db.run(sql, [grade, courseId, studentId], (err) => {
-        if (err) {
-            console.error(err);
-        }
-        // Redirect back to the course view so the user sees the updated list
-        res.redirect(`/courses/view/${courseId}`);
-    });
+router.post('/:id/grade/:student_id', requireLogin, requireAdmin, (req, res) => {
+    db.run("UPDATE Enrollment SET grade = ? WHERE course_ID = ? AND student_ID = ?",
+        [req.body.grade, req.params.id, req.params.student_id], () => res.redirect(`/courses/view/${req.params.id}`));
 });
 
 module.exports = router;

@@ -9,23 +9,18 @@
 <form action="<%= mode === 'Add' ? '/courses/add' : '/courses/edit/' + course.ID %>" method="POST" class="form-card">
 
     <div class="form-group">
-        <label>Course Name:</label>
+        <label><%= __('label_coursename') %>:</label>
         <input type="text" name="name" value="<%= course.Name || '' %>" required>
     </div>
 
     <div class="form-group">
-        <label>Description:</label>
-        <input type="text" name="description" value="<%= course.Description || '' %>">
-    </div>
-
-    <div class="form-group">
-        <label>Credits:</label>
+        <label><%= __('label_credits') %>:</label>
         <input type="number" name="credits" value="<%= course.Credits || '' %>" required min="0" max="30">
     </div>
 
     <div class="actions">
-        <button type="submit" class="btn"><%= mode === 'Edit' ? 'Update' : 'Save' %></button>
-        <a href="/courses" class="btn secondary">Cancel</a>
+        <button type="submit" class="btn"><%= mode === 'Edit' ? __('btn_update') : __('btn_save') %></button>
+        <a href="/courses" class="btn secondary"><%= __('btn_cancel') %></a>
     </div>
 </form>
 

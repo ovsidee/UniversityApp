@@ -2,62 +2,64 @@
 
 <div class="card detail-card">
     <h2><%= course.Name %></h2>
-    <p><strong>Credits:</strong> <%= course.Credits %></p>
-    <p><strong>Description:</strong> <%= course.Description || 'No description provided.' %></p>
-
+    <p><strong><%= __('label_credits') %>:</strong> <%= course.Credits %></p>
     <div style="margin-top: 15px;">
-        <a href="/courses/edit/<%= course.ID %>" class="btn">Edit Course</a>
-        <a href="/courses/<%= course.ID %>/enroll" class="btn" style="background-color: #28a745;">Add Student</a>
-        <a href="/courses" class="btn secondary">Back to List</a>
+        <% if (role === 'admin') { %>
+            <a href="/courses/edit/<%= course.ID %>" class="btn"><%= __('btn_edit') %></a>
+            <a href="/courses/<%= course.ID %>/enroll" class="btn" style="background-color: #28a745;"><%= __('btn_enroll') %></a>
+        <% } %>
+        <a href="/courses" class="btn secondary"><%= __('btn_cancel') %></a>
     </div>
 </div>
 
-<h3>Enrolled Students</h3>
+<h3><%= __('detail_course_students') %></h3>
 
 <% if (students.length > 0) { %>
     <table>
         <thead>
         <tr>
-            <th>Student Name</th>
-            <th>Grade</th>
-            <th>Actions</th> </tr>
+            <th><%= __('table_name') %></th>
+            <th><%= __('table_grade') %></th>
+            <th><%= __('table_actions') %></th>
+        </tr>
         </thead>
         <tbody>
         <% students.forEach(student => { %>
             <tr>
+                <td><%= student.First_Name %> <%= student.Last_Name %></td>
                 <td>
-                    <a href="/students/view/<%= student.ID %>">
-                        <%= student.First_Name %> <%= student.Last_Name %>
-                    </a>
+                    <% if (role === 'admin') { %>
+                        <form action="/courses/<%= course.ID %>/grade/<%= student.ID %>" method="POST" style="display: flex; gap: 5px; align-items: center;">
+                            <input
+                                    type="number"
+                                    name="grade"
+                                    value="<%= student.grade %>"
+                                    step="0.5"
+                                    min="2"
+                                    max="5"
+                                    style="width: 80px; padding: 5px;"
+                            >
+                            <button type="submit" class="btn-sm edit"><%= __('btn_update') || 'Set' %></button>
+                        </form>
+                    <% } else { %>
+                        <%= student.grade %>
+                    <% } %>
                 </td>
-
                 <td>
-                    <form action="/courses/<%= course.ID %>/grade/<%= student.ID %>" method="POST" style="display: flex; gap: 5px; align-items: center;">
-                        <input
-                                type="number"
-                                name="grade"
-                                value="<%= student.grade %>"
-                                step="0.5"
-                                min="2"
-                                max="5"
-                                style="width: 70px; padding: 4px;"
-                                placeholder="-"
-                        >
-                        <button type="submit" class="btn-sm edit" title="Update Grade">Set</button>
-                    </form>
-                </td>
-
-                <td>
-                    <form action="/courses/<%= course.ID %>/remove/<%= student.ID %>" method="POST" style="display:inline;" onsubmit="return confirm('Remove this student from the course?')">
-                        <button type="submit" class="btn-sm delete">Remove</button>
-                    </form>
+                    <% if (role === 'admin') { %>
+                        <form action="/courses/<%= course.ID %>/remove/<%= student.ID %>" method="POST" onsubmit="return confirm('<%= __('confirm_unenroll') %>')">
+                            <button type="submit" class="btn-sm delete"><%= __('btn_remove') %></button>
+                        </form>
+                    <% } else { %>
+                        <span style="color: #999;"><%= __('text_read_only') %></span>
+                    <% } %>
                 </td>
             </tr>
         <% }) %>
         </tbody>
     </table>
 <% } else { %>
-    <p>No students are currently enrolled in this course.</p>
+    <p><%= __('no_enrollments') %></p>
 <% } %>
 
 <%- include('../partials/footer') %>

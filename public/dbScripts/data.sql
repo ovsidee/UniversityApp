@@ -10,35 +10,36 @@ VALUES ('Vitalii', 'Korytnyi', 's31719@pjwstk.edu.pl', '555-444-333'),
        ('Artem', 'Gatsuta', 'artem.gatsuta@pjwstk.edu.pl', '500-111-227'),
        ('Maryna', 'Korytna', 'maryna.korytna@pjwstk.edu.pl', '500-111-228');
 
-INSERT INTO Course (Name, Description, Credits)
-VALUES ('AM',  'Analiza matematyczna', 5),
-       ('PPJ', 'Podstawy programowania w języku Java', 6),
-       ('TAK', 'Techniki i architektura komputerów', 4),
-       ('WDZ', 'Wstęp do zarządzania', 3),
-       ('WSI', 'Wprowadzenie do systemów informacyjnych', 5),
-       ('HKJ', 'Historia i Kultura Japonii', 3),
-       ('ANG', 'Język angielski', 3),
-       ('BHP', 'Szkolenie z zakresu BHP', 0),
-       ('ALG', 'Algebra liniowa i geometria', 5),
-       ('MAD', 'Matematyka dyskretna', 5),
-       ('RBD', 'Relacyjne bazy danych', 5),
-       ('GUI', 'Programowanie obiektowe i GUI', 4),
-       ('PJC', 'Programowanie w językach C i C++', 4),
-       ('SOP', 'Systemy operacyjne', 4),
-       ('ANG', 'Język angielski', 3),
-       ('ASD', 'Algorytmy i struktury danych', 5),
-       ('SAD', 'Statystyczna analiza danych', 5),
-       ('SBD', 'Systemy baz danych', 5),
-       ('SYC', 'Systemy cyfrowe i podstawy elektroniki', 4),
-       ('UTP', 'Uniwersalne techniki programowania', 4),
-       ('SKJ', 'Sieci komputerowe i programowania sieciowe w języku Java', 5),
-       ('ANG', 'Język angielski', 3),
-       ('NAI', 'Narzedzia sztucznej inteligencji', 6),
-       ('PPY', 'Podstawy Programowania w Języku Python', 4),
-       ('WF',  'Wychowanie fizyczne', 0),
-       ('PRI', 'Projektowanie systemów informacyjnych', 6),
-       ('PPB', 'Prawne podstawy działalności gospodarczej', 3),
-       ('MUL', 'Multimedia', 6);
+INSERT INTO Course (Name, Credits)
+VALUES
+    ('AM', 5),
+    ('PPJ', 6),
+    ('TAK', 4),
+    ('WDZ', 3),
+    ('WSI', 5),
+    ('HKJ', 3),
+    ('ANG', 3),
+    ('BHP', 0),
+    ('ALG', 5),
+    ('MAD', 5),
+    ('RBD', 5),
+    ('GUI', 4),
+    ('PJC', 4),
+    ('SOP', 4),
+    ('ANG', 3),
+    ('ASD', 5),
+    ('SAD', 5),
+    ('SBD', 5),
+    ('SYC', 4),
+    ('UTP', 4),
+    ('SKJ', 5),
+    ('ANG', 3),
+    ('NAI', 6),
+    ('PPY', 4),
+    ('WF', 0),
+    ('PRI', 6),
+    ('PPB', 3),
+    ('MUL', 6);
 
 INSERT INTO Enrollment (student_ID, course_ID, grade, enrollment_date)
 VALUES
@@ -102,6 +103,14 @@ VALUES
 (10, 26, '4.5', '2026-09-03'),
 (10, 23, '5.0', '2026-09-04');
 
-INSERT INTO User (Username, Password)
-VALUES ('admin', '$2a$10$wW5gC.7.g/yVwL/N.hJJO.u7.t.t.t.t.t.t.t.t.t.t.t.t.t.t.t');
--- (Note: In a real scenario, you generate this hash via code, but this works for seeding)
+INSERT INTO Role (Name)
+VALUES
+('admin'),
+('student'),
+('guest');
+
+INSERT INTO User (Username, Password, Role_ID, Student_ID)
+VALUES
+('admin', '$2a$12$z12jpWDJ6XwXfPglYHWeRuuJWgSYDRep73TgOP1BhntCya2Oip9ci', 1, NULL), -- pass is 'Admin123!'
+('student', '$2a$12$aHwOMeufQtjmBw1j4AV5ZeotOgo406fPfmypal8TYsOTOpq.6Z3u6', 2, NULL), -- pass is 'Student123!'
+('guest', '$2a$12$zD/hkcEQoziO0rBV5ABrCu40UfR6B2CuXdJjj.yCs5YVWtC8yiyLq', 3, NULL); -- pass is 'Guest123!'

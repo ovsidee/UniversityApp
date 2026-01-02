@@ -1,25 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= lang %>">
 <head>
     <meta charset="UTF-8">
-    <title>University App</title>
+    <title><%= __('brand') %></title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 <nav>
-    <div class="brand">UniApp</div>
+    <div class="brand"><%= __('brand') %></div>
     <ul>
-        <li><a href="/" class="<%= active === '' ? 'active' : '' %>">Home</a></li>
-        <li><a href="/students" class="<%= active === 'students' ? 'active' : '' %>">Students</a></li>
-        <li><a href="/courses" class="<%= active === 'courses' ? 'active' : '' %>">Courses</a></li>
+        <li><a href="/" class="<%= active === '' ? 'active' : '' %>"><%= __('home_nav') %></a></li>
+
+        <% if (role !== 'guest') { %>
+            <li><a href="/students" class="<%= active === 'students' ? 'active' : '' %>"><%= __('students_nav') %></a></li>
+            <li><a href="/courses" class="<%= active === 'courses' ? 'active' : '' %>"><%= __('courses_nav') %></a></li>
+        <% } %>
 
         <% if (user) { %>
-            <li style="margin-left: 20px; color: #aaa;">Hello, <%= user %></li>
-            <li><a href="/logout" style="color: #ff6b6b;">Logout</a></li>
+            <li style="margin-left: 20px; color: #aaa;"><%= __('welcome_user') %>, <%= user %> (<%= role %>)</li>
+            <li><a href="/logout" style="color: #ff6b6b;"><%= __('logout_nav') %></a></li>
         <% } else { %>
-            <li><a href="/login">Login</a></li>
+            <li><a href="/login"><%= __('login_nav') %></a></li>
         <% } %>
+
+        <li style="margin-left: 15px;">
+            <a href="?lang=en" style="opacity: <%= lang==='en'?'1':'0.5'%>">EN</a> |
+            <a href="?lang=pl" style="opacity: <%= lang==='pl'?'1':'0.5'%>">PL</a>
+        </li>
     </ul>
 </nav>
-<div class="container">
 <div class="container">

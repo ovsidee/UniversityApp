@@ -1,37 +1,37 @@
 <%- include('../partials/header') %>
 
 <div class="header-flex">
-    <h2>Students List</h2>
-    <% if (user) { %>
-        <a href="/students/add" class="btn">Add New Student</a>
+    <h2><%= __('page_students_title') %></h2>
+    <% if (role === 'admin') { %>
+        <a href="/students/add" class="btn"><%= __('btn_add_student') %></a>
     <% } %>
 </div>
 <table>
     <thead>
     <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <% if (user) { %> <th>Actions</th> <% } %>
+        <th><%= __('table_id') %></th>
+        <th><%= __('table_name') %></th>
+        <th><%= __('table_email') %></th>
+        <th><%= __('table_actions') %></th>
     </tr>
     </thead>
     <tbody>
+    <% if(students.length === 0) { %> <tr><td colspan="4"><%= __('no_students') %></td></tr> <% } %>
     <% students.forEach(student => { %>
         <tr>
             <td><%= student.ID %></td>
             <td><%= student.First_Name %> <%= student.Last_Name %></td>
             <td><%= student.Email %></td>
-            <% if (user) { %>
             <td>
-                <a href="/students/view/<%= student.ID %>" class="btn-sm view">View</a>
-                <a href="/students/edit/<%= student.ID %>" class="btn-sm edit">Edit</a>
+                <a href="/students/view/<%= student.ID %>" class="btn-sm view"><%= __('btn_view') %></a>
 
-                <form action="/students/delete/<%= student.ID %>" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?')">
-                    <button type="submit" class="btn-sm delete">Delete</button>
-                </form>
+                <% if (role === 'admin') { %>
+                    <a href="/students/edit/<%= student.ID %>" class="btn-sm edit"><%= __('btn_edit') %></a>
+                    <form action="/students/delete/<%= student.ID %>" method="POST" style="display:inline;" onsubmit="return confirm('<%= __('confirm_delete') %>')">
+                        <button type="submit" class="btn-sm delete"><%= __('btn_delete') %></button>
+                    </form>
+                <% } %>
             </td>
-            <% } else { %>
-            <% } %>
         </tr>
     <% }) %>
     </tbody>
@@ -39,13 +39,15 @@
 
 <div class="pagination" style="margin-top: 20px; text-align: center;">
     <% if (currentPage > 1) { %>
-        <a href="/students?page=<%= currentPage - 1 %>" class="btn secondary">Previous</a>
+        <a href="/students?page=<%= currentPage - 1 %>" class="btn secondary"><%= __('btn_prev') %></a>
     <% } %>
 
-    <span style="margin: 0 10px;">Page <%= currentPage %> of <%= totalPages %></span>
+    <span style="margin: 0 10px;">
+        <%= __('page_info') %> <%= currentPage %> / <%= totalPages %>
+    </span>
 
     <% if (currentPage < totalPages) { %>
-        <a href="/students?page=<%= currentPage + 1 %>" class="btn secondary">Next</a>
+        <a href="/students?page=<%= currentPage + 1 %>" class="btn secondary"><%= __('btn_next') %></a>
     <% } %>
 </div>
 

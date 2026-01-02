@@ -1,13 +1,21 @@
--- Disable foreign keys temporarily to allow dropping tables safely
-PRAGMA foreign_keys = OFF;
+PRAGMA
+foreign_keys = OFF;
 DROP TABLE IF EXISTS Enrollment;
 DROP TABLE IF EXISTS Course;
 DROP TABLE IF EXISTS Student;
+DROP TABLE IF EXISTS User;
+DROP TABLE IF EXISTS Role;
+PRAGMA
+foreign_keys = ON;
 
--- Re-enable foreign keys
-PRAGMA foreign_keys = ON;
+CREATE TABLE Role
+(
+    ID   INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name TEXT UNIQUE NOT NULL
+);
 
-CREATE TABLE Student (
+CREATE TABLE Student
+(
     ID          INTEGER PRIMARY KEY AUTOINCREMENT,
     First_Name  TEXT        NOT NULL,
     Last_Name   TEXT        NOT NULL,
@@ -19,7 +27,6 @@ CREATE TABLE Course
 (
     ID          INTEGER PRIMARY KEY AUTOINCREMENT,
     Name        TEXT    NOT NULL,
-    Description TEXT,
     Credits     INTEGER NOT NULL
 );
 
@@ -36,7 +43,11 @@ CREATE TABLE Enrollment
 
 CREATE TABLE User
 (
-    ID       INTEGER PRIMARY KEY AUTOINCREMENT,
-    Username TEXT UNIQUE NOT NULL,
-    Password TEXT        NOT NULL
+    ID         INTEGER PRIMARY KEY AUTOINCREMENT,
+    Username   TEXT UNIQUE NOT NULL,
+    Password   TEXT        NOT NULL,
+    Role_ID    INTEGER,
+    Student_ID INTEGER,
+    FOREIGN KEY (Student_ID) REFERENCES Student (ID) ON DELETE SET NULL,
+    FOREIGN KEY (Role_ID) REFERENCES Role (ID) ON DELETE SET NULL
 );
