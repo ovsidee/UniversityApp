@@ -4,13 +4,14 @@
   "students_nav": "Studenci",
   "courses_nav": "Kursy",
   "login_nav": "Zaloguj",
+  "register_nav": "Rejestracja",
   "logout_nav": "Wyloguj",
   "welcome_user": "Witaj",
   "my_profile": "Mój Profil",
 
   "hero_title": "Witamy w Systemie Zarządzania Uczelnią",
   "hero_subtitle": "Zarządzaj studentami, kursami i ocenami efektywnie.",
-  "hero_btn_view_courses": "Zobacz Kursy",
+  "hero_btn_view_courses": "Kursy",
   "hero_btn_login": "Zaloguj się",
   "features_title": "Funkcje",
   "feat_students_title": "Zarządzanie Studentami",
@@ -78,6 +79,7 @@
   "confirm_unenroll": "Usunąć z kursu?",
 
   "error_enroll_exists": "Błąd: Student jest już zapisany na ten kurs.",
+  "error_course_exists": "Ten kurs już istnieje. Nie dodano.",
   "error_invalid_email": "Nieprawidłowy format adresu email.",
   "error_email_duplicate": "Błąd: Ten email jest już zarejestrowany.",
 

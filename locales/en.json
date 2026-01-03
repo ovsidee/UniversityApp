@@ -4,13 +4,14 @@
   "students_nav": "Students",
   "courses_nav": "Courses",
   "login_nav": "Login",
+  "register_nav": "Register",
   "logout_nav": "Logout",
   "welcome_user": "Welcome",
   "my_profile": "My Profile",
 
   "hero_title": "Welcome to the University Management System",
   "hero_subtitle": "Manage students, courses, and grades efficiently.",
-  "hero_btn_view_courses": "View Courses",
+  "hero_btn_view_courses": "Courses",
   "hero_btn_login": "Login to Start",
   "features_title": "Features",
   "feat_students_title": "Student Management",
@@ -78,6 +79,7 @@
   "confirm_unenroll": "Remove from course?",
 
   "error_enroll_exists": "Error: Student is already enrolled in this course.",
+  "error_course_exists": "This course already exists. Not added.",
   "error_invalid_email": "Invalid email format.",
   "error_email_duplicate": "Error: This email is already registered.",
 

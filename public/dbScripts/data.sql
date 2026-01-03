@@ -26,14 +26,12 @@ VALUES
     ('GUI', 4),
     ('PJC', 4),
     ('SOP', 4),
-    ('ANG', 3),
     ('ASD', 5),
     ('SAD', 5),
     ('SBD', 5),
     ('SYC', 4),
     ('UTP', 4),
     ('SKJ', 5),
-    ('ANG', 3),
     ('NAI', 6),
     ('PPY', 4),
     ('WF', 0),
@@ -112,5 +110,5 @@ VALUES
 INSERT INTO User (Username, Password, Role_ID, Student_ID)
 VALUES
 ('admin', '$2a$12$z12jpWDJ6XwXfPglYHWeRuuJWgSYDRep73TgOP1BhntCya2Oip9ci', 1, NULL), -- pass is 'Admin123!'
-('student', '$2a$12$aHwOMeufQtjmBw1j4AV5ZeotOgo406fPfmypal8TYsOTOpq.6Z3u6', 2, NULL), -- pass is 'Student123!'
+('artem', '$2a$12$6b2QRwTrAktUCPl2Q1whI.mYz4ACH1zfdIJpVohrl16IGQFaQtOnW', 2, 9),    -- pass is 'Artem123!'
 ('guest', '$2a$12$zD/hkcEQoziO0rBV5ABrCu40UfR6B2CuXdJjj.yCs5YVWtC8yiyLq', 3, NULL); -- pass is 'Guest123!'

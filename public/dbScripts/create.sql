@@ -26,7 +26,7 @@ CREATE TABLE Student
 CREATE TABLE Course
 (
     ID          INTEGER PRIMARY KEY AUTOINCREMENT,
-    Name        TEXT    NOT NULL,
+    Name        TEXT  UNIQUE  NOT NULL,
     Credits     INTEGER NOT NULL
 );
 
