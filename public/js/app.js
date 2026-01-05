@@ -134,6 +134,7 @@ window.updateNavLang = (lang) => {
     });
 };
 
+
 // ----------delete handlers
 window.deleteStudent = async (id) => {
     if(!confirm(t('confirm_delete'))) return;
@@ -222,5 +223,5 @@ window.updateGrade = async (cid, sid) => {
     handleRouting();
 };
 
-// init program
+// init the app
 init();
