@@ -82,7 +82,8 @@ function renderHome() {
 function updateNav() {
     const navLinks = document.getElementById('nav-links');
     const brandEl = document.querySelector('.brand');
-    if(brandEl) brandEl.innerText = t('brand');
+    if(brandEl)
+        brandEl.innerText = t('brand');
 
     const langSwitch = `
         <li style="margin-left: 15px;">
@@ -116,6 +117,7 @@ function updateNav() {
     }
 }
 
+// home page + navigation bar
 window.navigateTo = function(path) {
     window.history.pushState({}, path, window.location.origin + path);
     handleRouting();
@@ -138,13 +140,17 @@ window.updateNavLang = (lang) => {
 // ----------delete handlers
 window.deleteStudent = async (id) => {
     if(!confirm(t('confirm_delete'))) return;
+
     await fetchApi(`/api/students/${id}`, { method: 'DELETE' });
+
     handleRouting();
 };
 
 window.deleteCourse = async (id) => {
     if(!confirm(t('confirm_delete'))) return;
+
     await fetchApi(`/api/courses/${id}`, { method: 'DELETE' });
+
     handleRouting();
 };
 
@@ -161,8 +167,12 @@ window.handleStudentSave = async (e, mode, id) => {
     const method = mode === 'Add' ? 'POST' : 'PUT';
 
     const res = await fetchApi(url, { method, body: JSON.stringify(body) });
-    if(res.ok) window.navigateTo('/students');
-    else { const data = await res.json(); showError(t(data.error) || "Error"); }
+    if (res.ok)
+        window.navigateTo('/students');
+    else {
+        const data = await res.json();
+        showError(t(data.error) || "Error");
+    }
 };
 
 window.handleCourseSave = async (e, mode, id) => {
@@ -172,31 +182,59 @@ window.handleCourseSave = async (e, mode, id) => {
     const method = mode === 'Add' ? 'POST' : 'PUT';
 
     const res = await fetchApi(url, { method, body: JSON.stringify(body) });
-    if (res.ok) window.navigateTo('/courses');
-    else { const data = await res.json(); showError(t(data.error) || "Error"); }
+    if (res.ok)
+        window.navigateTo('/courses');
+    else {
+        const data = await res.json();
+        showError(t(data.error) || "Error");
+    }
 };
 
 // ----------enrollments handlers
 window.handleEnrollSubmit = async (e, context, contextId) => {
     e.preventDefault();
-    const selectValue = document.getElementById('select-item').value;
-    const grade = document.getElementById('grade').value;
+
+    const studentId = document.getElementById('select-item').value;
+    const gradeInput = document.getElementById('grade').value;
     const date = document.getElementById('date').value;
 
-    let body = { grade: grade || null, enrollment_date: date };
-    let url = context === 'student' ? `/api/students/${contextId}/enroll` : `/api/courses/${contextId}/enroll`;
+    // check grade
+    let finalGrade = null;
+    if (gradeInput) {
+        const parsedGrade = parseFloat(gradeInput);
+        if (isNaN(parsedGrade) || parsedGrade < 2 || parsedGrade > 5) {
+            const errorMsg = t('error_grade_range') || "Grade must be between 2 and 5";
+            alert(errorMsg);
+            return;
+        }
+        finalGrade = parsedGrade;
+    }
 
-    if (context === 'student') body.course_id = selectValue;
-    else body.student_id = selectValue;
+    let body = {
+        student_id: studentId,
+        grade: finalGrade,
+        enrollment_date: date
+    };
 
-    const res = await fetchApi(url, { method: 'POST', body: JSON.stringify(body) });
+    const url = `/api/courses/${contextId}/enroll`;
+    const res = await fetchApi(url,
+        {
+            method: 'POST',
+            body: JSON.stringify(body)
+        }
+    );
 
-    if(res.ok) window.navigateTo(context === 'student' ? `/students/view/${contextId}` : `/courses/view/${contextId}`);
-    else { const json = await res.json(); showError(t(json.error) || "Error"); }
+    if (res.ok) {
+        window.navigateTo(`/courses/view/${contextId}`);
+    } else {
+        const json = await res.json();
+        showError(t(json.error) || "Error");
+    }
 };
 
 window.removeEnrollment = async (sid, cid, fromCourse = false) => {
-    if(!confirm(t('confirm_unenroll'))) return;
+    if (!confirm(t('confirm_unenroll')))
+        return;
 
     await fetchApi(`/api/students/${sid}/enroll/${cid}`, { method: 'DELETE' });
 

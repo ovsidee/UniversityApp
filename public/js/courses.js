@@ -136,12 +136,29 @@ export async function renderCourseEnrollForm(id) {
         const studentsRes = await fetchApi(`/api/students?all=true`); const students = await studentsRes.json();
         app.innerHTML = `
             <h2>${t('btn_enroll')}</h2><div id="msg" class="alert error" style="display:none"></div>
-            <div class="card detail-card"><h3>Course: ${course.Name}</h3><p>${t('label_select_student')}...</p></div>
+            <div class="card detail-card">
+                <h3>Course: ${course.Name}</h3>
+                <p>${t('label_select_student')}...</p>
+            </div>
             <form class="form-card" style="margin-top: 20px;" onsubmit="handleEnrollSubmit(event, 'course', ${course.ID})">
-                <div class="form-group"><label>${t('label_select_student')}:</label><select id="select-item" required style="width: 100%; padding: 8px;"><option value="" disabled selected>-- ${t('label_select_student')} --</option>${students.map(s => `<option value="${s.ID}">${s.First_Name} ${s.Last_Name} (${s.Email})</option>`).join('')}</select></div>
-                <div class="form-group"><label>${t('label_grade')}:</label><input type="number" id="grade" step="0.5"></div>
-                <div class="form-group"><label>${t('label_date')}:</label><input type="date" id="date" value="${new Date().toISOString().split('T')[0]}"></div>
-                <div class="actions"><button type="submit" class="btn">${t('btn_save')}</button><button type="button" class="btn secondary" onclick="navigateTo('/courses/view/${course.ID}')">${t('btn_cancel')}</button></div>
+                <div class="form-group">
+                    <label>${t('label_select_student')}:</label>
+                    <select id="select-item" required style="width: 100%; padding: 8px;">
+                        <option value="" disabled selected>-- ${t('label_select_student')} --</option>
+                        ${students.map(s => `<option value="${s.ID}">${s.First_Name} ${s.Last_Name} (${s.Email})</option>`).join('')}
+                    </select></div>
+                <div class="form-group">
+                    <label>${t('label_grade')}:</label>
+                    <input type="number" id="grade" step="0.5">
+                </div>
+                <div class="form-group">
+                    <label>${t('label_date')}:</label>
+                    <input type="date" id="date" value="${new Date().toISOString().split('T')[0]}">
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn">${t('btn_save')}</button>
+                    <button type="button" class="btn secondary" onclick="navigateTo('/courses/view/${course.ID}')">${t('btn_cancel')}</button>
+                </div>
             </form>
         `;
     } catch (e) {
