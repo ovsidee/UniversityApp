@@ -211,6 +211,7 @@ window.updateGrade = async (cid, sid) => {
     if (isNaN(gradeVal) || gradeVal < 2 || gradeVal > 5) {
         const errorMsg = t('error_grade_range') || "Grade must be between 2 and 5";
         alert(errorMsg);
+        handleRouting();
         return;
     }
 

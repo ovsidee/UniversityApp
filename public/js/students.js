@@ -2,6 +2,12 @@ import { t, fetchApi, state, showError } from './utils.js';
 
 export async function renderStudentList(page = 1) {
     const app = document.getElementById('app');
+
+    if (!state.currentUser) {
+        window.navigateTo('/login');
+        return;
+    }
+
     app.innerHTML = 'Loading...';
     try {
         const res = await fetchApi(`/api/students?page=${page}`);
@@ -54,6 +60,16 @@ export async function renderStudentList(page = 1) {
 }
 
 export async function renderStudentView(id) {
+    // must be admin or owner of student to view profile
+    const isOwner = state.currentUser && String(state.currentUser.studentId) === String(id);
+    const isAdmin = state.currentUser && state.currentUser.role === 'admin';
+
+    if (!isAdmin && !isOwner) {
+        showError(t('access_denied'));
+        window.navigateTo('/');
+        return;
+    }
+
     const app = document.getElementById('app');
     app.innerHTML = 'Loading...';
     try {
@@ -109,6 +125,12 @@ export async function renderStudentView(id) {
 }
 
 export async function renderStudentForm(mode, id = null) {
+    if (!state.currentUser || state.currentUser.role !== 'admin') {
+        showError(t('access_denied'));
+        window.navigateTo('/students');
+        return;
+    }
+
     const app = document.getElementById('app');
     let student = { First_Name: '', Last_Name: '', Email: '', PhoneNumber: '' };
     if (mode === 'Edit') {

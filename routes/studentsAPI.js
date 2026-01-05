@@ -25,6 +25,13 @@ router.get('/', requireLogin, (req, res) => {
         });
     }
 
+    if (req.query.all) {
+        return db.all("SELECT * FROM Student ORDER BY First_Name ASC", [], (err, rows) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json(rows); // Returns a plain array [ ... ]
+        });
+    }
+
     const page = parseInt(req.query.page) || 1;
     const limit = 5;
     const offset = (page - 1) * limit;

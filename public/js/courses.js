@@ -97,9 +97,18 @@ export async function renderCourseView(id) {
 }
 
 export async function renderCourseForm(mode, id = null) {
+    //only admin can add/edit courses
+    if (!state.currentUser || state.currentUser.role !== 'admin') {
+        showError(t('access_denied'));
+        window.navigateTo('/courses');
+        return;
+    }
+
     const app = document.getElementById('app');
     let course = { Name: '', Credits: '' };
+
     if (mode === 'Edit') { const res = await fetchApi(`/api/courses/${id}`); const data = await res.json(); course = data.course; }
+
     const title = mode === 'Add' ? t('btn_add_course') : t('btn_edit');
     const btnText = mode === 'Add' ? t('btn_save') : t('btn_update');
 
@@ -113,6 +122,13 @@ export async function renderCourseForm(mode, id = null) {
 }
 
 export async function renderCourseEnrollForm(id) {
+    // only admin can enroll students
+    if (!state.currentUser || state.currentUser.role !== 'admin') {
+        showError(t('access_denied'));
+        window.navigateTo(`/courses/view/${id}`);
+        return;
+    }
+
     const app = document.getElementById('app');
     app.innerHTML = 'Loading...';
     try {
@@ -128,5 +144,7 @@ export async function renderCourseEnrollForm(id) {
                 <div class="actions"><button type="submit" class="btn">${t('btn_save')}</button><button type="button" class="btn secondary" onclick="navigateTo('/courses/view/${course.ID}')">${t('btn_cancel')}</button></div>
             </form>
         `;
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+    }
 }
