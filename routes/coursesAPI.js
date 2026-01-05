@@ -13,13 +13,6 @@ function requireAdmin(req, res, next) {
 }
 
 router.get('/', (req, res) => {
-    if (req.query.all) {
-        return db.all("SELECT * FROM Course ORDER BY Name", [], (err, rows) => {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json(rows);
-        });
-    }
-
     const page = parseInt(req.query.page) || 1;
     const limit = 5;
     const offset = (page - 1) * limit;
@@ -90,8 +83,13 @@ router.post('/:id/enroll', requireLogin, requireAdmin, (req, res) => {
 });
 
 router.put('/:id/grade/:student_id', requireLogin, requireAdmin, (req, res) => {
+    const grade = parseFloat(req.body.grade);
+
+    if (isNaN(grade) || grade < 2 || grade > 5)
+        return res.status(400).json({ error: "Grade must be between 2 and 5" });
+
     db.run("UPDATE Enrollment SET grade = ? WHERE course_ID = ? AND student_ID = ?",
-        [req.body.grade, req.params.id, req.params.student_id], (err) => {
+        [grade, req.params.id, req.params.student_id], (err) => {
             if (err) return res.status(500).json({ error: err.message });
             res.json({ message: "Grade updated" });
         });

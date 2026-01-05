@@ -13,23 +13,15 @@ function requireAdmin(req, res, next) {
 }
 
 router.get('/', requireLogin, (req, res) => {
-    // If user is NOT admin, they can only see THEMSELVES.
+    // if user is not admin, they can only see their own profile
     if (req.session.roleName !== 'admin') {
         const studentId = req.session.studentId;
-        if (!studentId) return res.json([]); // If user has no student profile linked, return empty.
+        if (!studentId) return res.json([]); // if user has no student profile linked, return empty.
 
-        // Return array with single student object
+        // return single student
         return db.all("SELECT * FROM Student WHERE ID = ?", [studentId], (err, rows) => {
             if (err) return res.status(500).json({ error: err.message });
             res.json({ data: rows, meta: { currentPage: 1, totalPages: 1 } });
-        });
-    }
-
-    // --- Admin Logic (See Everyone) ---
-    if (req.query.all) {
-        return db.all("SELECT * FROM Student ORDER BY ID ASC", [], (err, rows) => {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json(rows);
         });
     }
 

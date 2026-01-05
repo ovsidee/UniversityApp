@@ -25,8 +25,7 @@ router.post('/register', (req, res) => {
         return res.status(400).json({ error: "All fields are required." });
     }
 
-    // Validation matching your JSON keys implies we should just return keys on error
-    if (password.length < 6) return res.status(400).json({ error: "password_hint" }); // Using hint key for error
+    if (password.length < 6) return res.status(400).json({ error: "password_hint" }); // Using key for error
 
     const phoneRegex = /^[0-9\-\+ ]+$/;
     if (phone && !phoneRegex.test(phone)) return res.status(400).json({ error: "error_invalid_phone" });
@@ -35,7 +34,7 @@ router.post('/register', (req, res) => {
     const roleId = 2;
 
     db.get("SELECT ID FROM User WHERE Username = ?", [username], (err, existingUser) => {
-        if (existingUser) return res.status(400).json({ error: "Username taken" }); // No specific key in JSON, keeping text
+        if (existingUser) return res.status(400).json({ error: "Username taken" });
 
         db.get("SELECT ID FROM Student WHERE Email = ?", [email], (err, existingStudent) => {
             if (existingStudent) {

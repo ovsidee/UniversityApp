@@ -2,18 +2,16 @@ const express = require('express');
 const path = require('path');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-const fs = require('fs'); // Needed to read json files
-const db = require('./db');
+const fs = require('fs');
 
 const app = express();
 
-// 1. Middleware
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// 2. Session Config
+// Session
 app.use(session({
     secret: 'TIN_PROJECT_SECRET',
     resave: false,
@@ -21,18 +19,15 @@ app.use(session({
     cookie: { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 }
 }));
 
-// 3. Import Routes
-const authRoutes = require('./routes/auth');
-const studentRoutes = require('./routes/students');
-const courseRoutes = require('./routes/courses');
+const authRoutes = require('./routes/authAPI');
+const studentRoutes = require('./routes/studentsAPI');
+const courseRoutes = require('./routes/coursesAPI');
 
-// 4. API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/courses', courseRoutes);
 
-// 5. Localization Endpoint (NEW)
-// The frontend calls this to get the dictionary (e.g., /api/locales/en)
+// frontend calls this to get the dictionary (e.g., /api/locales/en)
 app.get('/api/locales/:lang', (req, res) => {
     const lang = req.params.lang;
     const allowed = ['en', 'pl'];
@@ -46,7 +41,7 @@ app.get('/api/locales/:lang', (req, res) => {
     });
 });
 
-// 6. SPA Catch-All
+// catch all requests for SPA
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });

@@ -88,5 +88,6 @@
 
   "student_profile_details" : "Student Profile Details",
 
-  "error_invalid_phone": "Invalid phone number. Use only digits, spaces, or hyphens."
+  "error_invalid_phone": "Invalid phone number. Use only digits, spaces, or hyphens.",
+  "error_grade_range" : "Grade must be between 2 and 5."
 }

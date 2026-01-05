@@ -88,5 +88,6 @@
 
   "student_profile_details" : "Szczegóły profilu studenta",
 
-  "error_invalid_phone": "Nieprawidłowy numer telefonu. Używaj tylko cyfr, spacji lub myślników."
+  "error_invalid_phone": "Nieprawidłowy numer telefonu. Używaj tylko cyfr, spacji lub myślników.",
+  "error_grade_range" : "Ocena musi mieścić się w przedziale od 2 do 5. "
 }
