@@ -60,6 +60,8 @@ On the first run, it checks for university-app (SQLite DB file).
 If missing, it runs public/dbScripts/create.sql to create tables.
 It then runs public/dbScripts/data.sql to seed initial data.
 
+---
+
 ## How to run?
 
 ### 1. Start the server:
@@ -71,8 +73,11 @@ node server.js
 http://localhost:3000
 ```
 
+---
+
 ## Default Accounts (Seed Data)
-**Role	Username	Password**
-**Admin admin     Admin123!**
-**User  artem     Artem123!**
-**Guest guest     Guest123!**
+| Role  | Username | Password   |
+|-------|----------|------------|
+| Admin | admin    | Admin123!  |
+| User  | artem    | Artem123!  |
+| Guest | guest    | Guest123!  |
