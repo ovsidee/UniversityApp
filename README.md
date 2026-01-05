@@ -1,9 +1,9 @@
-# University Administration App 🎓
+# University Administration App
 
 A Single Page Application (SPA) for managing university students, courses, enrollments, and grades. 
 Built with Node.js, Express, SQLite, and JavaScript.
 
-**Project for TIN (Internet Technologies) - Final Project**
+**Final Project for TIN (Internet Technologies)**
 **Author:** Vitalii Korytnyi (s31719)
 
 ---
@@ -42,7 +42,7 @@ Built with Node.js, Express, SQLite, and JavaScript.
 ### 2. Clone/Download
 Navigate to your project directory:
 ```bash
-cd E:\UniversityProgrammingProjects\TIN\UniversityApp\
+cd ..\UniversityApp\
 ```
 
 ### 3. Install the required packages (express, sqlite3, bcryptjs, express-session, etc.):
@@ -51,7 +51,10 @@ npm install
 ```
 
 ### 4. Database Initialization
-The application includes a self-initializing database script.
+Generate the DataBase (if not present in folder)
+```bash 
+node dbInitializer.js
+```
 
 On the first run, it checks for university-app (SQLite DB file).
 If missing, it runs public/dbScripts/create.sql to create tables.
@@ -59,16 +62,11 @@ It then runs public/dbScripts/data.sql to seed initial data.
 
 ## How to run?
 
-### 1. Generate the DataBase (if not present in folder)
-```bash 
-node dbInitializer.js
-```
-
-### 2. Start the server:
+### 1. Start the server:
 ```bash
 node server.js
 ```
-### 3. Open your browser and visit: 
+### 2. Open your browser and visit: 
 ```bash
 http://localhost:3000
 ```
