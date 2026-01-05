@@ -16,7 +16,7 @@ Built with Node.js, Express, SQLite, and JavaScript.
 * **Admin:** Full CRUD (Create, Read, Update, Delete) permissions for Students and Courses.
 
 ### Functionality
-* **Single Page Application (SPA):** Uses `History API` (`pushState`, `popstate`) for seamless navigation without page reloads.
+* **Single Page Application (SPA)**
 * **Student Management:** Add, edit, delete, and view student profiles.
 * **Course Management:** Create, edit, and delete courses.
 * **Enrollment System:**
