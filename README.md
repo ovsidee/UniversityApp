@@ -72,7 +72,7 @@ http://localhost:3000
 ```
 
 ## Default Accounts (Seed Data)
-Role	Username	Password
-Admin admin     Admin123!
-User  artem     Artem123!
-Guest guest     Guest123!
+**Role	Username	Password**
+**Admin admin     Admin123!**
+**User  artem     Artem123!**
+**Guest guest     Guest123!**
