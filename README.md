@@ -25,7 +25,7 @@ Built with Node.js, Express, SQLite, and JavaScript.
     * Admin can remove students from courses.
 * **Internationalization (i18n):** dynamic switching between **English (EN)** and **Polish (PL)** languages.
 
-### 🛠 Technical Highlights
+### Technical Highlights
 * **Backend:** Node.js + Express.
 * **Database:** SQLite (Auto-initializes tables and seed data).
 * **Security:** Password hashing (`bcryptjs`), Session management (`express-session`), Backend API validation.
