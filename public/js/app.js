@@ -81,7 +81,8 @@ function renderHome() {
 // navigation bar (at the top)
 function updateNav() {
     const navLinks = document.getElementById('nav-links');
-    const brandEl = document.querySelector('.brand');
+    const brandEl = document.getElementById('brand');
+
     if(brandEl)
         brandEl.innerText = t('brand');
 
