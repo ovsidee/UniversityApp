@@ -233,7 +233,7 @@ window.handleEnrollSubmit = async (e, context, contextId) => {
     }
 };
 
-window.removeEnrollment = async (sid, cid, fromCourse = false) => {
+window.removeEnrollment = async (sid, cid) => {
     if (!confirm(t('confirm_unenroll')))
         return;
 
