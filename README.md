@@ -28,6 +28,7 @@ Built with Node.js, Express, SQLite, and JavaScript.
 ### Technical Highlights
 * **Backend:** Node.js + Express.
 * **Database:** SQLite (Auto-initializes tables and seed data).
+<img width="845" height="404" alt="image" src="https://github.com/user-attachments/assets/4a499ed1-69e3-4710-88c7-960edee464e9" />
 * **Security:** Password hashing (`bcryptjs`), Session management (`express-session`), Backend API validation.
 * **Frontend:** Pure Vanilla JavaScript (ES6 Modules) - No heavy frameworks like React or Vue.
 
